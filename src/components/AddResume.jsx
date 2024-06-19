@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@clerk/clerk-react";
 import GlobalApi from "./../../service/GlobalApi";
+import { useNavigate } from "react-router-dom";
 
 const AddResume = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -22,6 +23,8 @@ const AddResume = () => {
 
   const onCreate = async () => {
     setLoading(true);
+
+    const navigate = useNavigate();
 
     const uuid = uuidv4();
     const data = {
@@ -35,9 +38,9 @@ const AddResume = () => {
 
     GlobalApi.CreateNewResume(data).then(resp => {
         if(resp) {
-            console.log(resp);
             if(resp) {
                 setLoading(false);
+                navigate('/dashboard/resume/'+resp.data.data.documentId+'/edit')
             }
         }
     }, (error) => {
