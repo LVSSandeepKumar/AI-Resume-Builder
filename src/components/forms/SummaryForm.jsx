@@ -5,6 +5,9 @@ import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import GlobalApi from "./../../../service/GlobalApi";
 import { useParams } from "react-router-dom";
 import { Brain, LoaderCircle } from "lucide-react";
+import { AIChatSession } from "./../../../service/AiModel";
+
+const prompt = "Job Title: {jobTitle} , Depending on this job title give me a list of summary for 3 experience levels, Mid Level and Fresher level in 3-4 lines in array format, With summary and experience_level Field in JSON Format"
 
 const SummaryForm = ({enableNext}) => {
 
@@ -12,6 +15,7 @@ const SummaryForm = ({enableNext}) => {
   const [summary, setSummary] = useState();
   const [loading, setLoading] = useState(false);
   const params = useParams();
+  const [aiGeneratedSummaryList, setAiGeneratedSummaryList] = useState();
 
   useEffect(() => {
     summary && setResumeInfo({
@@ -19,6 +23,14 @@ const SummaryForm = ({enableNext}) => {
       summary : summary
     })
   }, [summary])
+
+  const GenerateSummaryWithAI = async () => {
+    setLoading(true);
+    const PROMPT = prompt.replace('{jobTitle}', resumeInfo?.jobTitle);
+    const result = await AIChatSession.sendMessage(PROMPT);
+    setAiGeneratedSummaryList(JSON.parse([result.response.text()]));
+    setLoading(false);
+  }
 
   const onSave = (e) => {
     e.preventDefault();
@@ -57,6 +69,7 @@ const SummaryForm = ({enableNext}) => {
               size="sm"
               type="button"
               className="border-primary text-primary flex gap-2"
+              onClick={() => GenerateSummaryWithAI()}
             >
               Generate with AI
               <Brain className="h-4 w-4" />
@@ -74,6 +87,18 @@ const SummaryForm = ({enableNext}) => {
           </div>
         </form>
       </div>
+
+      {aiGeneratedSummaryList && (
+        <div>
+          <h2 className="font-bold text-lg">Suggestions</h2>
+          {aiGeneratedSummaryList.map((item, index) => (
+            <div key={index}>
+              <h2 className="font-bold my-2">{item?.experience_level}</h2>
+              <p>{item?.summary}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
