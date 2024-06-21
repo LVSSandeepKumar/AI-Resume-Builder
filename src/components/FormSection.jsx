@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import PersonalDetailsForm from './forms/PersonalDetailsForm'
 import { Button } from './ui/button'
 import { ArrowLeft, ArrowRight, LayoutGrid } from 'lucide-react'
+import SummaryForm from './forms/SummaryForm'
 
 const FormSection = () => {
   const [activeFormIndex, setActiveFormIndex] = useState(1);
@@ -35,8 +36,10 @@ const FormSection = () => {
       </div>
 
       {
-        activeFormIndex === 1 
+        activeFormIndex == 1 
         ? <PersonalDetailsForm enableNext={(v) => setEnableNext(v)}/> 
+        : activeFormIndex == 2
+        ? <SummaryForm enableNext={(v) => setEnableNext(v)}/>
         : null
       }
       
