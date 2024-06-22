@@ -35,6 +35,7 @@ const SummaryForm = ({enableNext}) => {
   const onSave = (e) => {
     e.preventDefault();
     setLoading(true);
+    enableNext(true);
 
     const data = {
       data: {
@@ -44,7 +45,6 @@ const SummaryForm = ({enableNext}) => {
 
     GlobalApi.UpdateResumeDetails(params?.resumeId, data).then(
       (resp) => {
-        enableNext(true);
         console.log(resp);
         setLoading(false);
         toast("Details Updated")
